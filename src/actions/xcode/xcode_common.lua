@@ -32,6 +32,8 @@
 			[".nib"] = "Resources",
 			[".xib"] = "Resources",
 			[".icns"] = "Resources",
+			[".png"] = "Resources",
+			[".cl"] = "Resources",
 		}
 		return categories[path.getextension(node.name)]
 	end
