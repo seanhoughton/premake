@@ -210,6 +210,34 @@
 		end
 	end
 
+	function xcode.resolvepath(node)
+		local pth, src
+		if xcode.isframework(node.path) then
+			--respect user supplied paths
+			if string.find(node.path,'/')  then
+				if string.find(node.path,'^%.')then
+					error('relative paths are not currently supported for frameworks')
+				end
+				pth = node.path
+			else
+				pth = "/System/Library/Frameworks/" .. node.path
+			end
+			src = "absolute"
+		else
+			-- something else; probably a source code file
+			src = "group"
+
+			-- if the parent node is virtual, it won't have a local path
+			-- of its own; need to use full relative path from project
+			if node.parent.isvpath then
+				pth = node.cfg.name
+			else
+				pth = tree.getlocalpath(node)
+			end
+		end
+		return pth, src
+	end
+
 
 --
 -- Print out a list value in the Xcode format.
@@ -311,30 +339,7 @@
 					
 				-- something else
 				else
-					local pth, src
-					if xcode.isframework(node.path) then
-						--respect user supplied paths
-						if string.find(node.path,'/')  then
-							if string.find(node.path,'^%.')then
-								error('relative paths are not currently supported for frameworks')
-							end
-							pth = node.path
-						else
-							pth = "/System/Library/Frameworks/" .. node.path
-						end
-						src = "absolute"
-					else
-						-- something else; probably a source code file
-						src = "group"
-
-						-- if the parent node is virtual, it won't have a local path
-						-- of its own; need to use full relative path from project
-						if node.parent.isvpath then
-							pth = node.cfg.name
-						else
-							pth = tree.getlocalpath(node)
-						end
-					end
+					pth, src = xcode.resolvepath(node)
 					
 					_p(2,'%s /* %s */ = {isa = PBXFileReference; lastKnownFileType = %s; name = "%s"; path = "%s"; sourceTree = "<%s>"; };',
 						node.id, node.name, xcode.getfiletype(node), node.name, pth, src)
@@ -692,7 +697,8 @@
 		_p(4,'GCC_MODEL_TUNING = G5;')
 
 		if tr.infoplist then
-			_p(4,'INFOPLIST_FILE = "%s";', tr.infoplist.path)
+			pth, src = xcode.resolvepath(tr.infoplist)
+			_p(4,'INFOPLIST_FILE = "%s";', pth)
 		end
 
 		installpaths = {
