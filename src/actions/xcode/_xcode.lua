@@ -28,6 +28,7 @@
 			Universal32 = "32-bit Universal", 
 			Universal64 = "64-bit Universal", 
 			Universal = "Universal",
+			iOS = "iOS",
 		},
 		
 		default_platform = "Universal",
@@ -79,6 +80,7 @@
 			Universal32 = "32-bit Universal", 
 			Universal64 = "64-bit Universal", 
 			Universal = "Universal",
+			iOS = "iOS",
 		},
 		
 		default_platform = "Universal",

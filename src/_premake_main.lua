@@ -24,16 +24,6 @@
 		for sln in premake.solution.each() do
 			local platforms = sln.platforms or { }
 			
-			-- an empty table is equivalent to a native build
-			if #platforms == 0 then
-				table.insert(platforms, "Native")
-			end
-			
-			-- the solution must provide a native build in order to support this feature
-			if not table.contains(platforms, "Native") then
-				return false, sln.name .. " does not target native platform\nNative platform settings are required for the --platform feature."
-			end
-			
 			-- add it to the end of the list, if it isn't in there already
 			if not table.contains(platforms, platform) then
 				table.insert(platforms, platform)

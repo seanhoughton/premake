@@ -732,8 +732,14 @@
 			Universal32 = "$(ARCHS_STANDARD_32_BIT)",
 			Universal64 = "$(ARCHS_STANDARD_64_BIT)",
 			Universal = "$(ARCHS_STANDARD_32_64_BIT)",
+			iOS    = "$(ARCHS_UNIVERSAL_IPHONE_OS)",
 		}
 		_p(4,'ARCHS = "%s";', archs[cfg.platform])
+
+		if cfg.platform == "iOS" then
+			_p(4,'SDKROOT = %s;', "iphoneos")
+			_p(4,'CODE_SIGN_IDENTITY = "%s";', "iPhone Developer")
+		end
 		
 		local targetdir = path.getdirectory(cfg.buildtarget.bundlepath)
 		if targetdir ~= "." then
